@@ -4,6 +4,7 @@
 * C++, HTML/CSS, Javascript, Python, but should probably learn everything else anyways and is actively trying to
 * Serial hacker––like, hackathons. You know, sleep deprivation and code sprints
 * Researching in CV. ML is hard but I'll make it work (hopefully)
+* Btw game dev is fun but fairly cumbersome too
 
 # Project Brainstorm
 * Basic comparison between components, features, and prices of computers based on a few user-detailed filters
