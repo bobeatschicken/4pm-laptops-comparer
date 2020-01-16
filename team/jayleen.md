@@ -1,4 +1,4 @@
-#Personal Description
+# Personal Description
 * 3rd year CS
 * Serial hacker but low key a bit retired™ - I like making random things and also the hackathon culture but my body is an old man
 * Really like playing games though I don't have a lot of time, used to be involved in art and still am today, just not as much
@@ -6,7 +6,7 @@
 * I like turtles
 
 
-#Project Brainstorm
+# Project Brainstorm
 * Having the capability to add notes for each laptop you want to compare
 * ability to have accounts so that you can access the comparison anywhere
 * Hopefully in the future expand form not only laptops but to other devices/products as well
