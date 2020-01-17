@@ -1,8 +1,8 @@
-###Tony Sun
+### Tony Sun
 * I want to learn
 * I want to build a product with real usage
 
-###Project Ideas
+### Project Ideas
 * Dashboard to compare products (MVP)
   * Price comparison
   * Incorporate charts, graphs, other visuals
