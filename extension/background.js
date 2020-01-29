@@ -2,7 +2,7 @@ var currentTab;
 var currentBookmark;
 
 function logger( yeet ) {
-
+    console.log( yeet );
 }
 
 function get_url() {
@@ -34,12 +34,12 @@ browser.browserAction.onClicked.addListener(toggleBookmark);
 
 function updateActiveTab( tabs ) {
 
-    console.log( tabs );
+    //console.log( tabs );
 
     function updateTab( tabs ) {
         if( tabs[ 0 ] ) {
             currentTab = tabs[ 0 ];
-            console.log( currentTab.url );
+            //console.log( currentTab.url );
         }
     }
 

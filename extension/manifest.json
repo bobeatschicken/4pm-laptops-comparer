@@ -10,7 +10,7 @@
   },
 
   "permissions": [
-    "tabs", "https://amazon.com/*"
+    "tabs", "https://amazon.com/*", "storage"
   ],
   
   "background": {
