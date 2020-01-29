@@ -1,7 +1,7 @@
 {
 
   "description": "Laptop comparison tool for Amazon",
-  "manifest_version": 1,
+  "manifest_version": 2,
   "name": "compare-tool",
   "version": "1.0",
   "homepage_url": "https://github.com/ucsb-cs48-w20/4pm-laptops-comparer/",

@@ -23,10 +23,10 @@ function updateIcon() {
 }
 
 function toggleBookmark() {
-    if( currentBookmark ) {
-        console.log( "we clicked" );
+    if( currentTab ) {
+        console.log( "Running on " + currentTab.url );
     } else {
-        console.log( "we clicked but nope" );
+        console.log( "No active tab" );
     }
 }
 
