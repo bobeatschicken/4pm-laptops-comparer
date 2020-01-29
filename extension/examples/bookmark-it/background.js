@@ -23,6 +23,14 @@ function updateIcon() {
   }); 
 }
 
+function get_url() {
+  if( currentTab ) {
+    return currentTab.url;
+  } else {
+    return "null";
+  }
+}
+
 /*
  * Add or remove the bookmark on the current page.
  */

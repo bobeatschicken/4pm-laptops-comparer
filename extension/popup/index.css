@@ -1,0 +1,17 @@
+html, body {
+    height: 216px;
+    width: 216px;
+    padding: 20px;
+    margin: 0;
+}
+
+.richert {
+    height: 200px;
+    width: 200px;
+    padding: 0px 8px 0px 8px;
+}
+
+#content {
+    height: 216px;
+    width: 216px;
+}
