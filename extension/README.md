@@ -1,4 +1,4 @@
-# EXTENSION
+# Comparer WebExtension
 
 ## Versions
 
