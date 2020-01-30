@@ -1,15 +1,11 @@
 var currentTab;
 var currentBookmark;
 
-function logger( yeet ) {
-    console.log( yeet );
-}
-
 function get_url() {
     if( currentTab ) {
         return currentTab.url;
     } else {
-        return "null";
+        return null;
     }
 }
 
@@ -39,7 +35,6 @@ function updateActiveTab( tabs ) {
     function updateTab( tabs ) {
         if( tabs[ 0 ] ) {
             currentTab = tabs[ 0 ];
-            //console.log( currentTab.url );
         }
     }
 
