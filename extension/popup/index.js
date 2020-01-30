@@ -53,7 +53,6 @@ function on_load() {
 	}
 
 	function on_click( evt ) {
-		app.logger( "yeet" );
 		if( !saved ) {
 			var item = {};
 			item[ pid ] = false;
