@@ -7,9 +7,10 @@ db = client.cheese
 #Makes a collection called customers
 mycol = db["customers"]
 
-mydict = { "name": "John", "address": "Highway 37" }
+mydict = { "name": "Bob", "address": "Highway 37" }
 
 #inserts the document into the customers collection
 x = mycol.insert_one(mydict)
 
+print("Hello world")
 print(x.inserted_id)
