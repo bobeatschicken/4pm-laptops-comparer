@@ -1,16 +1,16 @@
 {
 
-  "description": "Adds browser action icon to toolbar to choose user agent string from popup menu. See https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Examples#user-agent-rewriter",
+  "description": "Laptop comparison tool for Amazon",
   "manifest_version": 2,
-  "name": "user-agent-rewriter",
+  "name": "compare-tool",
   "version": "1.0",
-  "homepage_url": "https://github.com/mdn/webextensions-examples/tree/master/user-agent-rewriter",
+  "homepage_url": "https://github.com/ucsb-cs48-w20/4pm-laptops-comparer/",
   "icons": {
     "48": "icons/person-48.png"
   },
 
   "permissions": [
-    "webRequest", "webRequestBlocking", "https://httpbin.org/*" 
+    "tabs", "https://amazon.com/*", "storage"
   ],
   
   "background": {
@@ -19,8 +19,8 @@
 
   "browser_action": {
     "default_icon": "icons/person-32.png",
-    "default_title": "Choose a user agent",
-    "default_popup": "popup/choose_ua.html"
+    "default_title": "Save Laptop",
+    "default_popup": "popup/index.html"
   }
 
 }

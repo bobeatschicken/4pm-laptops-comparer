@@ -1,0 +1,25 @@
+html, body {
+    height: 256px;
+    width: 256px;
+    margin: 0;
+}
+
+.richert {
+    height: 200px;
+    width: 200px;
+    padding: 0px 8px 0px 8px;
+}
+
+#richert {
+    opacity: 1;
+}
+
+#richert:hover {
+    opacity: 0.5;
+}
+
+#content {
+    height: 216px;
+    width: 216px;
+    padding: 20px;
+}
