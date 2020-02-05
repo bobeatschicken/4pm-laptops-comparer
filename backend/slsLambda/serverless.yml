@@ -58,6 +58,10 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
+  googleAuthorizer:
+    handler: authorizer.handle
+    environment:
+      GOOGLE_CLIENT_ID: ${ssm:compare-google-client-id}
   hello:
     handler: handler.hello
 #    The following are a few example events you can configure
