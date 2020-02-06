@@ -1,6 +1,6 @@
 {
-  "name": "laptop",
-  "description": "",
+  "name": "compare-backend",
+  "private": true,
   "version": "0.1.0",
   "dependencies": {},
   "devDependencies": {
