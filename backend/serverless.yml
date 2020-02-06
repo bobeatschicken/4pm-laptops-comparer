@@ -11,7 +11,7 @@ functions:
     environment:
       GOOGLE_CLIENT_ID: ${ssm:compare-google-client-id}
   hello:
-    handler: handler.hello
+    handler: handler.create_user
     events:
       - http:
           path: users/create
