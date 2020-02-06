@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react"
-import { navigate, RouteComponentProps } from "@reach/router"
+import React, { useState } from "react"
+import { Link, RouteComponentProps } from "@reach/router"
 import { GoogleLogin } from "react-google-login"
 import tw from "tailwind.macro"
 import { createGlobalStyle } from "styled-components/macro"
@@ -71,10 +71,6 @@ const TextWell = tw.div`
 const LoginPage: React.FC<RouteComponentProps> = () => {
   const [userObject, setUserObject] = useState()
 
-  const onLogin = useCallback(() => {
-    navigate("/app/first")
-  }, [])
-
   return (
     <>
       <BodyStyles />
@@ -91,11 +87,22 @@ const LoginPage: React.FC<RouteComponentProps> = () => {
           </Profile>
           <GoogleLogin
             clientId={loginId}
-            onSuccess={onLogin}
+            onSuccess={setUserObject}
             onFailure={console.log}
+            isSignedIn={true}
             cookiePolicy="single_host_origin"
           />
-
+          {
+            userObject && (
+              <>
+                <br />
+                <h1>Your JWT:</h1>
+                <TextWell>
+                  {userObject.tokenId}
+                </TextWell>
+              </>
+            )
+          }
         </Card>
       </Layout>
     </>
