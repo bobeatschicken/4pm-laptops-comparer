@@ -50,13 +50,19 @@ type ProjectProps = {
   projectId: string
 }
 
+// The thumbnail should not FLIP when transitioning from project overview to
+// dashboard
+function neverFlip() {
+  return false
+}
+
 export const ProjectThumbnail: React.FC<ProjectProps & DivProps> = props => {
   const { projectId, ...otherProps } = props
 
   return (
     <Wrapper {...otherProps}>
       <PageRect as={Link} to={`/app/project/${projectId}`}>
-        <Flipped flipId={`bg-${projectId}`}>
+        <Flipped flipId={`bg-${projectId}`} shouldFlip={neverFlip}>
           <SheetLayout />
         </Flipped>
       </PageRect>
