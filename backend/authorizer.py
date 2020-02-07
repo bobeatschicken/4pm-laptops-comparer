@@ -4,7 +4,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 
 
-def handle(event):
+def handle(event, context):
     token = event["authorizationToken"]
 
     print("Client token: " + token)
