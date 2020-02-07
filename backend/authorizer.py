@@ -15,8 +15,6 @@ def handle(event, context):
 
         if token_info["iss"] not in ["accounts.google.com", "https://accounts.google.com"]:
             raise ValueError("Wrong issuer.")
-
-        user_id = token_info["sub"]
     except ValueError:
         raise Exception("Unauthorized")
     principal_id = "user"
@@ -32,12 +30,6 @@ def handle(event, context):
 
     # Finally, build the policy
     auth_response = policy.build()
-
-    context = {
-        "user_id": user_id
-    }
-
-    auth_response["context"] = context
 
     return auth_response
 
