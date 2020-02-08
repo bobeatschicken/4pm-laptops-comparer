@@ -4,7 +4,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 
 
-def handle(event):
+def handle(event, context):
     token = event["authorizationToken"]
 
     print("Client token: " + token)
@@ -15,8 +15,6 @@ def handle(event):
         if token_info["iss"] not in ["accounts.google.com", "https://accounts.google.com"]:
             raise ValueError("Wrong issuer.")
 
-        user_id = token_info["sub"]
-        user_info = get_user_info(token)
     except ValueError:
         raise Exception("Unauthorized")
     principal_id = "user"
@@ -32,37 +30,7 @@ def handle(event):
 
     # Finally, build the policy
     auth_response = policy.build()
-
-    context = {
-        "user_id": user_id
-        "user_info": user_info
-    }
-
-    auth_response["context"] = context
-
     return auth_response
- 
- def get_user_info(credentials):
-  """Send a request to the UserInfo API to retrieve the user's information.
-
-  Args:
-    credentials: oauth2client.client.OAuth2Credentials instance to authorize the
-                 request.
-  Returns:
-    User information as a dict.
-  """
-  user_info_service = build(
-      serviceName='oauth2', version='v2',
-      http=credentials.authorize(httplib2.Http()))
-  user_info = None
-  try:
-    user_info = user_info_service.userinfo().get().execute()
-  except errors.HttpError, e:
-    logging.error('An error occurred: %s', e)
-  if user_info and user_info.get('id'):
-    return user_info
-  else:
-    raise NoUserIdException()
 
 # From https://github.com/awslabs/aws-apigateway-lambda-authorizer-blueprints
 
