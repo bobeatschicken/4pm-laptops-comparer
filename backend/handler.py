@@ -1,22 +1,12 @@
 import json
-import boto3
-import json
-
-lambda_client = boto3.client('lambda')
 
 
-def create_user(event, context):
-    invoke_response = lambda_client.invoke(FunctionName="authorizer.handle",
-                                           InvocationType='RequestResponse'
-                                           )
-    x = (invoke_response['Payload'].read())
-    print(x)
+def return_workspaces(event, context):
 
-    body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "x" : x,
-        "input": event
-    }
+    body = event
+
+    #Event is the response returned by the authorizer
+    
 
     response = {
         "statusCode": 200,
