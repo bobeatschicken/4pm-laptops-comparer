@@ -9,13 +9,14 @@ def get_attributes(url):
     response = requests.get(url, headers=HEADERS)
     soup = BeautifulSoup(response.content, 'lxml')
 
-    price = get_price(soup)
     title = get_title(soup)
+    price = get_price(soup)
+    item_id = get_id(url)
 
     return {
         'title': title,
         'price': price,
-
+        'id': item_id
     }
 
 
@@ -50,6 +51,14 @@ def get_price(soup):
     # print(html_prices)
 
     return max(set(html_prices), key=html_prices.count)
+
+
+def get_id(url):
+    item_id = re.search(r'(\/dp\/|\/gp\/)\w+(\/|$)', url).group(0)
+    if item_id[-1] == '/':
+        item_id == item_id[:-1]
+
+    return item_id[4:]
 
 
 
