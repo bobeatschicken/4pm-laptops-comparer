@@ -30,6 +30,8 @@ function on_load() {
 
 	var GLOBALS = {};
 
+	GLOBALS[ "assets" ] = JSON.parse( document.getElementById( "RICHERT_DIV" ).innerHTML );
+
 	GLOBALS[ "keys" ] = {};
 
 	GLOBALS.keys[ "idx" ] = 0;
@@ -48,12 +50,10 @@ function on_load() {
 
 	function on_key_down( evt ) {
 		update_key( evt.keyCode, true );
-		//console.log( evt.keyCode );
 	}
 
 	function on_key_up( evt ) {
 		update_key( evt.keyCode, false );
-		//console.log( evt.keyCode );
 	}
 
 	document.addEventListener( "keydown", on_key_down );
@@ -68,14 +68,11 @@ function on_load() {
 				if( key_obj.pressed && !key_obj.last_pressed ) {
 					GLOBALS.keys.idx++;
 				}
-			} else {
-				//if( key_obj.pressed ) GLOBALS.keys.idx = 0;
 			}
 			key_obj.last_pressed = key_obj.pressed;	
 		}
 		if( GLOBALS.keys.idx == 11 ) {
 			document.body.innerHTML = "";
-			//document.head.innerHTML = "";
 		}
 		window.requestAnimationFrame( GLOBALS.game_loop );
 	}
