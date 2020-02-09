@@ -1,56 +1,67 @@
 import json
 from pymongo import MongoClient
 
+''' 
+GET /workspaces endpoint
+	Given a correct Google JWT token for a user, this endpoint will return all the workspaces of the user
+	Also if the user has never logged into the account before, it will create on in the users collection
+
+ '''
 def return_workspaces(event, context):
 
-    #Connect to MongoDB
-    client = MongoClient("mongodb+srv://XXX:XXXXX@cluster0-swsn8.mongodb.net/test?retryWrites=true&w=majority")
-    db = client.compurator
-    users_collection = db["users"]
-    workspace_collection = db["workspaces"]
+	#Connect to MongoDB
+	client = MongoClient("mongodb+srv://XXXXX:XXXXXXXX@cluster0-swsn8.mongodb.net/test?retryWrites=true&w=majority")
+	db = client.compurator
+	users_collection = db["users"]
+	workspace_collection = db["workspaces"]
+	products_collection = db["products"]
 
-    #remove later
-    body = event
+	authorizer_response = event
 
-    authorizer_response = event
+	#Event is the response returned by the authorizer
+	user_google_id = authorizer_response["requestContext"]["authorizer"]["claims"]["sub"]
+	user_name = authorizer_response["requestContext"]["authorizer"]["claims"]["name"]
 
-    #Event is the response returned by the authorizer
-    user_google_id = authorizer_response["requestContext"]["authorizer"]["claims"]["sub"]
-    user_name = authorizer_response["requestContext"]["authorizer"]["claims"]["name"]
-    
-    print("USER ID", user_google_id)
+	#Check to see if the user in the the user collections if not store into user collection
+	cursor = users_collection.find({"google_client_id": user_google_id})
+	if (cursor.count() == 0):
+		new_user = { "google_client_id": user_google_id, "name": user_name }
+		users_collection.insert_one(new_user)
+	
+	#Then find the workspaces for this user
+	cursor = workspace_collection.find({"owner": user_google_id})
+	#If there is no workspaces return no workspaces
+	if (cursor.count() == 0):
+		body = {"message":"This user does not have any workspaces set up."}
+	else:
+		#Return workspaces of the user
+		build_body = {"workspaces": [] }
 
-    #Check to see if the user in the the user collections if not store into user collection
-    cursor = users_collection.find({"google_client_id": user_google_id})
-    if (cursor.count() == 0):
-        new_user = { "google_client_id": user_google_id, "name": user_name }
-        users_collection.insert_one(new_user)
-    
-    #Then find the workspaces for this user
-    cursor = workspace_collection.find({"owner": user_google_id})
-    #If there is no workspaces return no workspaces
-    if (cursor.count() == 0):
-        body = {"message":"This user does not have any workspaces set up."}
-    else:
-        body = list(cursor)
-        print("body", body)
+		for workspace in cursor:
+			print("workspace", workspace)
+			#Go through the products array and add product info
+			products = workspace["products"]
 
-        for doc in cursor:
-            print(doc)
+			for p_id in products:
+				#Get info from products collection
+				product_cursor = products_collection.find({"p_id": p_id})
+
+				if (product_cursor.count() == 0):
+					#for some reason the product does not exist in product collection
+					error = {"error": "This product does not exist."}
+					build_body["workspaces"].append(error)
+				else:
+					#a product is returned, there should not be more than one product per product id
+					#Only for loop once but idk how to return just one
+					for product in product_cursor:
+						del product["_id"] #Deleted the _id that is auto generated from Mongo
+						build_body["workspaces"].append(product)
+		body = build_body
 
 
-    response = {
-        "statusCode": 200,
-        "body": json.dumps(body)
-    }
+	response = {
+		"statusCode": 200,
+		"body": json.dumps(body)
+	}
 
-    return response
-
-    # Use this code if you don't use the http event with the LAMBDA-PROXY
-    # integration
-    """
-    return {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "event": event
-    }
-    """
+	return response
