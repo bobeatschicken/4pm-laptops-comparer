@@ -1,14 +1,22 @@
 CXX=dogescript
+CXXFLAGS=--beautify
 
-all: background.js popup/index.js
+JSFILES=background.js \
+		inject_richert.js \
+		popup/index.js
+
+all: ${JSFILES}
 
 background.js: background.djs
-	${CXX} $^ --beautify > $@
+	${CXX} $^ ${CXXFLAGS} > $@
+
+inject_richert.js: inject_richert.djs
+	${CXX} $^ ${CXXFLAGS} > $@
 
 popup/index.js: popup/index.djs
-	${CXX} $^ --beautify > $@
+	${CXX} $^ ${CXXFLAGS} > $@
 
 clean:
-	rm -f background.js popup/index.js
+	rm -f ${JSFILES}
 
 .PHONY: all clean

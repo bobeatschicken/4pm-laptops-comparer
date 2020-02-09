@@ -10,7 +10,7 @@
   },
 
   "permissions": [
-    "tabs", "https://amazon.com/*", "storage"
+    "tabs", "https://amazon.com/*", "storage", "https://*.amazon.com/*"
   ],
   
   "background": {
@@ -18,9 +18,16 @@
   },
 
   "browser_action": {
-    "default_icon": "icons/person-32.png",
+    "default_title_icon": "icons/person-32.png",
     "default_title": "Save Laptop",
     "default_popup": "popup/index.html"
-  }
+  },
+
+  "content_scripts": [{
+    "js": ["inject_richert.js"],
+    "matches": ["https://*.amazon.com/*","https://amazon.com/*"]
+  }],
+
+  "web_accessible_resources": ["richert.js"]
 
 }
