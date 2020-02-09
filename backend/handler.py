@@ -4,9 +4,10 @@ from pymongo import MongoClient
 def return_workspaces(event, context):
 
     #Connect to MongoDB
-    client = MongoClient("mongodb+srv://xxxx:xxxxxxx@cluster0-swsn8.mongodb.net/test?retryWrites=true&w=majority")
+    client = MongoClient("mongodb+srv://XXX:XXXXX@cluster0-swsn8.mongodb.net/test?retryWrites=true&w=majority")
     db = client.compurator
     users_collection = db["users"]
+    workspace_collection = db["workspaces"]
 
     #remove later
     body = event
@@ -15,15 +16,27 @@ def return_workspaces(event, context):
 
     #Event is the response returned by the authorizer
     user_google_id = authorizer_response["requestContext"]["authorizer"]["claims"]["sub"]
+    user_name = authorizer_response["requestContext"]["authorizer"]["claims"]["name"]
+    
     print("USER ID", user_google_id)
 
     #Check to see if the user in the the user collections if not store into user collection
     cursor = users_collection.find({"google_client_id": user_google_id})
-    print("CURSOR", cursor)
+    if (cursor.count() == 0):
+        new_user = { "google_client_id": user_google_id, "name": user_name }
+        users_collection.insert_one(new_user)
+    
+    #Then find the workspaces for this user
+    cursor = workspace_collection.find({"owner": user_google_id})
+    #If there is no workspaces return no workspaces
+    if (cursor.count() == 0):
+        body = {"message":"This user does not have any workspaces set up."}
+    else:
+        body = list(cursor)
+        print("body", body)
 
-    print("doc", cursor[0])
-    #print("TWO", cursor.next())
-
+        for doc in cursor:
+            print(doc)
 
 
     response = {
