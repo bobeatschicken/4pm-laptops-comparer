@@ -16,6 +16,7 @@ functions:
       - http:
           path: users/create
           method: get
+          authorizer: googleAuthorizer
 
 plugins:
   - serverless-python-requirements
