@@ -3,8 +3,12 @@ import string
 from bs4 import BeautifulSoup
 import re
 
+# user-agent request header
+# docs: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
 
+# input: product url from amazon
+# output: dictionary with item title, price, and id
 def get_attributes(url):
     response = requests.get(url, headers=HEADERS)
     soup = BeautifulSoup(response.content, 'lxml')
@@ -20,6 +24,8 @@ def get_attributes(url):
     }
 
 
+# input: object containing HTML that is parsed
+# output: product title (up to the first , or ( or | character
 def get_title(soup):
     title = soup.find(id="productTitle")
 
@@ -31,6 +37,9 @@ def get_title(soup):
     return title
 
 
+# input: object containing HTML that is parsed
+# output: most probable price (using heuristics)
+# NOTE: price will vary! max deviation looked to be ~$100 so far
 def get_price(soup):
     html_prices = list()
 
@@ -53,15 +62,11 @@ def get_price(soup):
     return max(set(html_prices), key=html_prices.count)
 
 
+# input: product url on amazon
+# output: item id based on either dp or gp
 def get_id(url):
     item_id = re.search(r'(\/dp\/|\/gp\/)\w+(\/|$)', url).group(0)
     if item_id[-1] == '/':
         item_id == item_id[:-1]
 
     return item_id[4:]
-
-
-
-if __name__ == '__main__':
-    url = 'https://www.amazon.com/HP-Dual-Core-Processor-Bluetooth-14-cb161wm/dp/B07YXSLFDH/ref=sr_1_3?keywords=hp+laptop&qid=1581187417&s=electronics&sr=1-3'
-    print(get_attributes(url))
