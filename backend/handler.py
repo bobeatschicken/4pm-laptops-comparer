@@ -10,17 +10,20 @@ GET /workspaces endpoint
 def return_workspaces(event, context):
 
 	#Connect to MongoDB
-	client = MongoClient("mongodb+srv://XXXXX:XXXXXXXX@cluster0-swsn8.mongodb.net/test?retryWrites=true&w=majority")
+	client = MongoClient("mongodb+srv://XXXXX:XXXXXX@cluster0-swsn8.mongodb.net/test?retryWrites=true&w=majority")
 	db = client.compurator
 	users_collection = db["users"]
 	workspace_collection = db["workspaces"]
 	products_collection = db["products"]
 
+	body = ""
+
 	authorizer_response = event
 
 	#Event is the response returned by the authorizer
-	user_google_id = authorizer_response["requestContext"]["authorizer"]["claims"]["sub"]
-	user_name = authorizer_response["requestContext"]["authorizer"]["claims"]["name"]
+	print("requestContext: ", authorizer_response["requestContext"]["authorizer"])
+	user_google_id = authorizer_response["requestContext"]["authorizer"]["user_id"]
+	user_name = authorizer_response["requestContext"]["authorizer"]["user_name"]
 
 	#Check to see if the user in the the user collections if not store into user collection
 	cursor = users_collection.find({"google_client_id": user_google_id})

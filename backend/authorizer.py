@@ -12,8 +12,11 @@ def handle(event, context):
 
     try:
         token_info = id_token.verify_oauth2_token(token, requests.Request(), os.environ["GOOGLE_CLIENT_ID"])
+        print("Token info:", token_info)
         if token_info["iss"] not in ["accounts.google.com", "https://accounts.google.com"]:
             raise ValueError("Wrong issuer.")
+        user_id = token_info["sub"]
+        user_name = token_info["name"]
 
     except ValueError:
         raise Exception("Unauthorized")
@@ -30,6 +33,14 @@ def handle(event, context):
 
     # Finally, build the policy
     auth_response = policy.build()
+
+    context = {
+        "user_id": user_id,
+        "user_name": user_name
+    }
+
+    auth_response["context"] = context
+
     return auth_response
 
 # From https://github.com/awslabs/aws-apigateway-lambda-authorizer-blueprints
