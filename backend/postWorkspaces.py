@@ -18,8 +18,6 @@ def create_workspace(event, context):
 
 	try:
 		user_info = get_user_auth(event)
-		# Check to see if the user in the the user collections if not store into user collection
-		check_user(user_info)
 
 		# Create new workspace owned by user with default untitled name
 		new_workspace = {"owner": user_info["g_id"], "name": "Untitled Workspace", "products": []}
