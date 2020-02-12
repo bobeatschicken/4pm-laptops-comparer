@@ -1,14 +1,12 @@
 import React, { useState } from "react"
 import { Link, RouteComponentProps } from "@reach/router"
-import { GoogleLogin } from "react-google-login"
 import tw from "tailwind.macro"
 import { createGlobalStyle } from "styled-components/macro"
 import { Flipped } from "react-flip-toolkit"
 
 import richert from "images/richert.jpg"
-
-const loginId =
-  "58231025054-oua7h9662eqpb7ngl33qjhshetl13fod.apps.googleusercontent.com"
+import { useAuth } from "utils/auth"
+import GoogleLoginButton from "components/GoogleLoginButton"
 
 const BodyStyles = createGlobalStyle`
   body {
@@ -69,7 +67,7 @@ const TextWell = tw.div`
 `
 
 const LoginPage: React.FC<RouteComponentProps> = () => {
-  const [userObject, setUserObject] = useState()
+  const { token } = useAuth()
 
   return (
     <>
@@ -85,20 +83,14 @@ const LoginPage: React.FC<RouteComponentProps> = () => {
               <SubTitle>First, let's get you logged in with Google.</SubTitle>
             </ProfileTitle>
           </Profile>
-          <GoogleLogin
-            clientId={loginId}
-            onSuccess={setUserObject}
-            onFailure={console.log}
-            isSignedIn={true}
-            cookiePolicy="single_host_origin"
-          />
+          <GoogleLoginButton />
           {
-            userObject && (
+            token && (
               <>
                 <br />
                 <h1>Your JWT:</h1>
                 <TextWell>
-                  {userObject.tokenId}
+                  {token}
                 </TextWell>
               </>
             )

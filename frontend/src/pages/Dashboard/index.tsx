@@ -11,6 +11,7 @@ import {
   config,
   ReactSpringHook
 } from "react-spring"
+import { useFetch } from "react-async"
 
 import {
   ProjectThumbnail as ProjectThumbnailBase,

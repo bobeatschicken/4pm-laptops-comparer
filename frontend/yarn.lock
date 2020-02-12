@@ -8844,9 +8844,10 @@ react-flip-toolkit@^7.0.7:
   dependencies:
     rematrix "0.2.2"
 
-"react-google-login@https://github.com/btk5h/react-google-login/releases/download/v5.0.8-fixed/react-google-login-5.0.8.tgz":
-  version "5.0.8"
-  resolved "https://github.com/btk5h/react-google-login/releases/download/v5.0.8-fixed/react-google-login-5.0.8.tgz#42b712a465049ef8eddd643930d2279c0a965fa8"
+react-google-login@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/react-google-login/-/react-google-login-5.1.0.tgz#ed9f1069310419dfe263ffcab986a246140752b7"
+  integrity sha512-G5sh6EWJbQxk2hAel0EUB6r1Nyz9BRW/fEyCHV8g108l37/k/ctXDi4I3v1NCYzGN8SQFWq1I2l4mqMkxIVHLQ==
   dependencies:
     "@types/react" "*"
     prop-types "^15.6.0"

@@ -11,7 +11,7 @@
     "react-async": "^10.0.0",
     "react-dom": "^16.12.0",
     "react-flip-toolkit": "^7.0.7",
-    "react-google-login": "https://github.com/btk5h/react-google-login/releases/download/v5.0.8-fixed/react-google-login-5.0.8.tgz",
+    "react-google-login": "^5.1.0",
     "react-helmet": "^5.2.1",
     "react-icons": "^3.8.0",
     "react-scripts": "3.3.0",
