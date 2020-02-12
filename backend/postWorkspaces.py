@@ -2,12 +2,15 @@ import json
 from pymongo import MongoClient
 import sys
 
-from mongoSetup import connect_database, get_user_auth
+from mongoSetup import connect_database, get_user_auth, check_user
+
+# connects to MongoDB
+db = connect_database()
 
 # POST /workspaces
 # Creates a new workspace, returns the id of the workspace
 def create_workspace(event, context):
-	db = connect_database()
+	global db
 
 	body = {}
 
@@ -16,12 +19,7 @@ def create_workspace(event, context):
 	try:
 		user_info = get_user_auth(event)
 		# Check to see if the user in the the user collections if not store into user collection
-		user = db.users.find_one({"google_client_id": user_info["g_id"]})
-		if user is None:
-			user = {"google_client_id": user_info["g_id"], "name": user_info["name"]}
-			db.users.insert_one(user)
-			print("user(", user_info["g_id"],") not found, new user created")
-		print("user:", user)
+		check_user(user_info)
 
 		# Create new workspace owned by user with default untitled name
 		new_workspace = {"owner": user_info["g_id"], "name": "Untitled Workspace", "products": []}
@@ -32,7 +30,7 @@ def create_workspace(event, context):
 
 		response = {
 			"statusCode": 200,
-			"errorCode": errorCode,
+			"errorCode": json.dumps(errorCode),
 			"body": json.dumps(body)
 		}
 		return response
@@ -42,7 +40,7 @@ def create_workspace(event, context):
 		errorCode["message"] = "ERROR: " + str(e)
 		response = {
 			"statusCode": 200,
-			"errorCode": errorCode,
+			"errorCode": json.dumps(errorCode),
 			"body": json.dumps(body)
 		}
 		print("ERROR:", sys.exc_info()[1])
