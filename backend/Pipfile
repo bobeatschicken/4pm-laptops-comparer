@@ -10,6 +10,8 @@ google-auth = "*"
 requests = "*"
 pymongo = "*"
 dnspython = "*"
+bs4 = "*"
+regex = "*"
 
 [requires]
 python_version = "3.7"
