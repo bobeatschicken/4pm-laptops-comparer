@@ -4,6 +4,8 @@ provider:
   name: aws
   runtime: python3.7
   region: us-west-1
+  environment:
+    DB_URL: ${self:custom.database.url}
 
 functions:
   googleAuthorizer:
@@ -14,9 +16,13 @@ functions:
     handler: handler.return_workspaces
     events:
       - http:
-          path: workspaces 
+          path: workspaces
           method: get
           authorizer: googleAuthorizer
+
+custom:
+  database:
+    url: mongodb+srv://${ssm:compare-db-username}:${ssm:compare-db-password}@${ssm:compare-db-url}
 
 plugins:
   - serverless-python-requirements
