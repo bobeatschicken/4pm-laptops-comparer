@@ -1,3 +1,4 @@
+import os
 import json
 from pymongo import MongoClient
 
@@ -10,7 +11,9 @@ GET /workspaces endpoint
 def return_workspaces(event, context):
 
 	#Connect to MongoDB
-	client = MongoClient("mongodb+srv://XXXXX:XXXXXX@cluster0-swsn8.mongodb.net/test?retryWrites=true&w=majority")
+	db_url = os.environ['DB_URL']
+	print(f"Connecting to {db_url}")
+	client = MongoClient(db_url)
 	db = client.compurator
 	users_collection = db["users"]
 	workspace_collection = db["workspaces"]
@@ -30,7 +33,7 @@ def return_workspaces(event, context):
 	if (cursor.count() == 0):
 		new_user = { "google_client_id": user_google_id, "name": user_name }
 		users_collection.insert_one(new_user)
-	
+
 	#Then find the workspaces for this user
 	cursor = workspace_collection.find({"owner": user_google_id})
 	#If there is no workspaces return no workspaces
