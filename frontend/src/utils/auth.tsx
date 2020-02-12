@@ -27,6 +27,7 @@ export const AuthProvider: React.FC = props => {
     isSignedIn: true,
     uxMode: "popup",
     onRequest: noop,
+    onFailure: console.error,
     onSuccess: setUserObject
   })
 
