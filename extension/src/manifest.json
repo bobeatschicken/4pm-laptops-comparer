@@ -44,6 +44,7 @@
 
     "web_accessible_resources": [
         "konami/richert.js",
-        "konami/index.html"
+        "konami/index.html",
+        "jwt/jwt.js"
     ]
 }

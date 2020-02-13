@@ -1,5 +1,24 @@
-such on_load
-    
+such popup_on_load
+    shh Initializing application constants
+    very JWT is ""
+    very APP_URL is "http://localhost:3000"
+
+    shh Instantiating a GLOBALS object
+    very GLOBALS is {}
+    GLOBALS["WORKSPACES"] is []
+
+    shh Handler for fetching the workspaces
+    such workspaces_listener
+        console dose log with this.responseText
+    wow
+
+    shh Request for the workspaces through GET /workspaces
+    very workspacesXHR is new XMLHttpRequest
+    workspacesXHR dose addEventListener with "load" workspaces_listener
+    workspacesXHR dose open with "GET" APP_URL+"/workspaces"
+    workspacesXHR dose setRequestHeader with "Authorization" JWT
+    workspacesXHR dose send
+
     very richert is document dose getElementById with "richert"
     very text is document dose getElementById with "text"
     very app is browser.extension dose getBackgroundPage
@@ -68,4 +87,4 @@ such on_load
 
 wow
 
-window dose addEventListener with "load" on_load
+window dose addEventListener with "load" popup_on_load
