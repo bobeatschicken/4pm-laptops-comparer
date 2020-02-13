@@ -152,7 +152,7 @@ def get_workspace_by_id(event, context):
 
 	response = {
 		"statusCode": statusCode,
-		"body": json.dumps(body)
+		"body": json.dumps(body),
 		"headers": {
 			"Access-Control-Allow-Origin": "*"
 		}
