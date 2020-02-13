@@ -13,7 +13,7 @@ import {
   NewProjectThumbnail as NewProjectThumbnailBase
 } from "components/ProjectThumbnail"
 import { NavBar } from "components/NavBar"
-import { useWorkspaces } from "resources/projects"
+import { useCreateWorkspace, useWorkspaces } from "resources/projects"
 
 const BodyStyles = createGlobalStyle`
   body {
@@ -49,6 +49,8 @@ type WorkspacesGridProps = {
 const WorkspacesGrid: React.FC<WorkspacesGridProps> = props => {
   const { workspaces } = props
 
+  const createWorkspace = useCreateWorkspace()
+
   const trail = useTrail(workspaces.length + 1, springConfig)
 
   type TrailStyles = { y: any; opacity: number }
@@ -63,6 +65,7 @@ const WorkspacesGrid: React.FC<WorkspacesGridProps> = props => {
             <NewProjectThumbnail
               key=""
               id="newProject"
+              onClick={createWorkspace}
               style={{
                 ...rest,
                 transform: y.interpolate((v: number) => `translateY(${v}px)`)
@@ -71,7 +74,7 @@ const WorkspacesGrid: React.FC<WorkspacesGridProps> = props => {
           )
         }
 
-        const id = workspaces[i]._id
+        const id = workspaces[i].workspace_id
 
         return (
           <ProjectThumbnail

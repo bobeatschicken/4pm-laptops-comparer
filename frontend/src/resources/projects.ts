@@ -1,4 +1,5 @@
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
+import { navigate } from "@reach/router"
 import { useAuth } from "utils/auth"
 import useAxios from "axios-hooks"
 
@@ -28,4 +29,27 @@ export function useWorkspaces() {
     error: data?.error,
     loading: !data && !error
   }
+}
+
+export function useCreateWorkspace() {
+  const { token } = useAuth()
+
+  const [{ data }, run] =
+    useAxios({
+      url: `${BASE_URL}/workspaces`,
+      method: "POST",
+      headers: {
+        Authorization: token
+      }
+    }, { manual: true })
+
+  useEffect(() => {
+    if (data) {
+      navigate(`/app/workspace/${data._id}`)
+    }
+  }, [data])
+
+  return useCallback(() => {
+    run()
+  }, [run])
 }

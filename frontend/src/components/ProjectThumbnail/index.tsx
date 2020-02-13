@@ -62,7 +62,7 @@ export const ProjectThumbnail: React.FC<ProjectProps & DivProps> = props => {
 
   return (
     <Wrapper {...otherProps}>
-      <PageRect as={Link} to={`/app/project/${projectId}`}>
+      <PageRect as={Link} to={`/app/workspace/${projectId}`}>
         <Flipped flipId={`bg-${projectId}`} shouldFlip={neverFlip}>
           <SheetLayout />
         </Flipped>
