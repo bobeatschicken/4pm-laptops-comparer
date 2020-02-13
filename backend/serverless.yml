@@ -13,10 +13,17 @@ functions:
     environment:
       GOOGLE_CLIENT_ID: ${ssm:compare-google-client-id}
   hello:
-    handler: handler.return_workspaces
+    handler: handler.get_workspaces
     events:
       - http:
           path: workspaces
+          method: get
+          authorizer: googleAuthorizer
+  getWorkspaceById:
+    handler: handler.get_workspace_by_id
+    events:
+      - http:
+          path: workspaces/{workspaceId}
           method: get
           authorizer: googleAuthorizer
 
