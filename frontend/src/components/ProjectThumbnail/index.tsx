@@ -48,6 +48,7 @@ type DivProps = HTMLAttributes<HTMLDivElement>
 
 type ProjectProps = {
   projectId: string
+  projectName: string
 }
 
 // The thumbnail should not FLIP when transitioning from project overview to
@@ -57,7 +58,7 @@ function neverFlip() {
 }
 
 export const ProjectThumbnail: React.FC<ProjectProps & DivProps> = props => {
-  const { projectId, ...otherProps } = props
+  const { projectId, projectName, ...otherProps } = props
 
   return (
     <Wrapper {...otherProps}>
@@ -67,7 +68,7 @@ export const ProjectThumbnail: React.FC<ProjectProps & DivProps> = props => {
         </Flipped>
       </PageRect>
       <ProjectFooter>
-        {projectId}
+        {projectName}
       </ProjectFooter>
     </Wrapper>
   )
@@ -84,7 +85,7 @@ export const NewProjectThumbnail: React.FC<DivProps> = props => {
         </InnerLayout>
       </PageRect>
       <NewProjectFooter>
-        New Project
+        New Workspace
       </NewProjectFooter>
     </Wrapper>
   )

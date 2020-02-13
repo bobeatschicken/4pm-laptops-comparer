@@ -77,6 +77,7 @@ const WorkspacesGrid: React.FC<WorkspacesGridProps> = props => {
           <ProjectThumbnail
             key={id}
             projectId={id}
+            projectName={workspaces[i].name}
             style={{
               ...rest,
               transform: y.interpolate((v: number) => `translateY(${v}px)`)
