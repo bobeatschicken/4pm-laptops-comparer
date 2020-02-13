@@ -5,6 +5,7 @@ const noop = () => {}
 
 type AuthContextValue =  {
   token: string
+  loaded: boolean
   signIn: () => void
 }
 

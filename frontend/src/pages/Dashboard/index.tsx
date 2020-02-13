@@ -1,23 +1,19 @@
-import React, { useState, useRef } from "react"
-import { RouteComponentProps, Link, navigate } from "@reach/router"
+import React from "react"
+import { RouteComponentProps } from "@reach/router"
 import tw from "tailwind.macro"
 import { createGlobalStyle } from "styled-components/macro"
-import { Flipped } from "react-flip-toolkit"
 import {
   animated,
   useTrail,
-  useChain,
-  useSpring,
-  config,
-  ReactSpringHook
+  config
 } from "react-spring"
-import { useFetch } from "react-async"
 
 import {
   ProjectThumbnail as ProjectThumbnailBase,
   NewProjectThumbnail as NewProjectThumbnailBase
 } from "components/ProjectThumbnail"
 import { NavBar } from "components/NavBar"
+import { useWorkspaces } from "resources/projects"
 
 const BodyStyles = createGlobalStyle`
   body {
@@ -46,49 +42,65 @@ const springConfig = {
   }
 }
 
-const Dashboard: React.FC<RouteComponentProps> = () => {
-  const projects = [
-    "Project 1",
-    "Project 2"
-  ]
+type WorkspacesGridProps = {
+  workspaces: any
+}
 
-  const trail = useTrail(projects.length + 1, springConfig)
+const WorkspacesGrid: React.FC<WorkspacesGridProps> = props => {
+  const { workspaces } = props
+
+  const trail = useTrail(workspaces.length + 1, springConfig)
 
   type TrailStyles = { y: any; opacity: number }
 
   return (
     <>
-      <BodyStyles />
-      <NavBar />
-      <Layout>
-        {trail.map((props, i) => {
-          const { y, ...rest } = props as TrailStyles
+      {trail.map((props, i) => {
+        const { y, ...rest } = props as TrailStyles
 
-          if (i === projects.length) {
-            return (
-              <NewProjectThumbnail
-                id="newProject"
-                style={{
-                  ...rest,
-                  transform: y.interpolate((v: number) => `translateY(${v}px)`)
-                }}
-              />
-            )
-          }
-
-          const id = projects[i]
-
+        if (i === workspaces.length) {
           return (
-            <ProjectThumbnail
-              key={id}
-              projectId={id}
+            <NewProjectThumbnail
+              key=""
+              id="newProject"
               style={{
                 ...rest,
                 transform: y.interpolate((v: number) => `translateY(${v}px)`)
               }}
             />
           )
-        })}
+        }
+
+        const id = workspaces[i]._id
+
+        return (
+          <ProjectThumbnail
+            key={id}
+            projectId={id}
+            style={{
+              ...rest,
+              transform: y.interpolate((v: number) => `translateY(${v}px)`)
+            }}
+          />
+        )
+      })}
+    </>
+  )
+}
+
+const Dashboard: React.FC<RouteComponentProps> = () => {
+  const { workspaces, loading } = useWorkspaces()
+
+  return (
+    <>
+      <BodyStyles />
+      <NavBar />
+      <Layout>
+        {loading ? (
+          <div>Loading</div>
+        ) : (
+          <WorkspacesGrid workspaces={workspaces} />
+        )}
       </Layout>
     </>
   )
