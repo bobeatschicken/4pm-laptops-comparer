@@ -1,15 +1,17 @@
 import os
 import json
+from scrape_amazon.update_product_db_amazon import check_product_exists, add_product_amazon
 from pymongo import MongoClient
 from bson import ObjectId
 
-''' 
-GET /workspaces endpoint
+
+def get_workspaces(event, context):
+	''' 
+	GET /workspaces endpoint
 	Given a correct Google JWT token for a user, this endpoint will return all the workspaces of the user
 	Also if the user has never logged into the account before, it will create on in the users collection
 
- '''
-def get_workspaces(event, context):
+	'''
 
 	#Connect to MongoDB
 	db_url = os.environ['DB_URL']
@@ -46,8 +48,8 @@ def get_workspaces(event, context):
 
 		for workspace in cursor:
 			print("workspace", workspace)
-			build_workspace = {"workspace_id": 0, "products": []}
-
+			build_workspace = {"workspace_id": 0, "workspace_name": "", "products": []}
+			build_workspace["name"] = workspace["name"]
 			build_workspace["workspace_id"] = str(workspace["_id"])
 			#Go through the products array and add product info
 			products = workspace["products"]
@@ -79,13 +81,14 @@ def get_workspaces(event, context):
 	return response
 
 
-''' 
-GET /workspaces/{workspaceId} endpoint
+
+def get_workspace_by_id(event, context):
+	''' 
+	GET /workspaces/{workspaceId} endpoint
 	Given a correct Google JWT token for a user, this endpoint will return the workspaces of the specified ID
 	Should only work if the user owns that workspace
 
- '''
-def get_workspace_by_id(event, context):
+ 	'''
 	#Connect to MongoDB
 	db_url = os.environ['DB_URL']
 	print(f"Connecting to {db_url}")
@@ -96,6 +99,7 @@ def get_workspace_by_id(event, context):
 	products_collection = db["products"]
 
 	body = ""
+	statusCode = 200
 
 	authorizer_response = event
 
@@ -110,13 +114,18 @@ def get_workspace_by_id(event, context):
 	#Then find the workspaces for this user
 	cursor = workspace_collection.find({"_id": ObjectId(workspaceId)})
 
-	#If there is no workspaces return no workspaces
+	#If workspace does not exist return 404
 	if (cursor.count() == 0):
-		body = {"products":[]}
+		statusCode = 404
+		body = {"Error":"Workspace does not exist!"}
 	else:
 		#Return workspaces of the user
 		build_body = {"products": [] }
 		for workspace in cursor:
+			#if the user does not own the workspace
+			if (workspace["owner"] != user_google_id):
+				build_body = {"error": "User does not own this workspace."}
+
 			print("workspace", workspace)
 			products = workspace["products"]
 
@@ -138,8 +147,87 @@ def get_workspace_by_id(event, context):
 
 
 	response = {
-		"statusCode": 200,
+		"statusCode": statusCode,
 		"body": json.dumps(body)
+	}
+
+	return response
+
+
+
+def patch_workspace_by_id(event, context):
+	''' 
+	PATCH /workspaces/{workspaceId} endpoint
+	Given a correct Google JWT token and correct json for an updated workspace
+	endpoint will update the workspace with new info
+	Format for PATCH JSON
+	
+	Each field is optional, the ones that are specified will be updated into the workspace.
+	{
+		"name" : "new title" 
+		"products" : [new_products_array] 
+	}
+
+	'''
+
+	#Connect to MongoDB
+	db_url = os.environ['DB_URL']
+	print(f"Connecting to {db_url}")
+	client = MongoClient(db_url)
+	db = client.compurator
+	users_collection = db["users"]
+	workspace_collection = db["workspaces"]
+	products_collection = db["products"]
+
+	body = ""
+	statusCode = 200
+
+	authorizer_response = event
+
+	#print("EVENT", json.dumps(event))
+
+	#Event is the response returned by the authorizer
+	user_google_id = authorizer_response["requestContext"]["authorizer"]["user_id"]
+	user_name = authorizer_response["requestContext"]["authorizer"]["user_name"]
+	workspaceId = authorizer_response["pathParameters"]["workspaceId"]
+
+	patched_info = json.loads(authorizer_response["body"])
+
+	print ("body", patched_info)
+
+	print("workpace id", workspaceId)
+	#Then find the workspaces for this user
+	cursor = workspace_collection.find({"_id": ObjectId(workspaceId)})
+
+	#if workspace not found
+	if (cursor.count() == 0):
+		statusCode = 404
+		body = {"Error":"Workspace does not exist!"}
+	else:
+		#Update the ones that were passed into POST request with correct data.
+		for key in patched_info:
+			#For MVP, assume everytime patch is called only adding one product
+			if (key == "product"):
+				print("key bitch")
+				#Check to see if the url given exists in db, if not add
+				check_for_product = check_product_exists(patched_info[key])
+				product_id = check_for_product
+				print("check", check_for_product)
+				if (not check_for_product):
+					product_id = add_product_amazon(patched_info[key])
+					#Add to products array
+				
+				workspace_collection.update({"_id": ObjectId(workspaceId)}, {"$push": {"products": product_id}})
+			else:
+				workspace_collection.update_one({"_id": ObjectId(workspaceId)}, {"$set": {key:patched_info[key]}}, True)
+		body = {"Message": "Success"}
+
+	response = {
+		"statusCode": statusCode,
+		"body": json.dumps(body),
+		"headers": {
+			"Access-Control-Allow-Origin": "*"
+		}
 	}
 
 	return response

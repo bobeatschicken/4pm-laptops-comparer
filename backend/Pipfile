@@ -12,6 +12,7 @@ pymongo = "*"
 dnspython = "*"
 bs4 = "*"
 regex = "*"
+lxml = "*"
 
 [requires]
 python_version = "3.7"
