@@ -2,7 +2,6 @@ import { useCallback, useEffect } from "react"
 import { navigate } from "@reach/router"
 import { useAuth } from "utils/auth"
 import useAxios from "axios-hooks"
-import { AxiosRequestConfig } from "axios"
 
 const BASE_URL = process.env.REACT_APP_API_ENDPOINT
 
@@ -77,7 +76,8 @@ export function useWorkspace(workspaceId: string) {
   return {
     data,
     error: data?.error,
-    loading: !data && !error
+    loading: !data && !error,
+    refetch: run
   }
 }
 

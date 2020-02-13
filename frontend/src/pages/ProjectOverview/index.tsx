@@ -6,6 +6,7 @@ import { Flipped } from "react-flip-toolkit"
 import { FaAngleLeft } from "react-icons/all"
 
 import { NavBar } from "components/NavBar"
+import ProductSummary from "components/ProductSummary"
 import { usePatchWorkspace, useWorkspace } from "resources/projects"
 
 const BodyStyles = createGlobalStyle`
@@ -40,14 +41,25 @@ const TitleInput = tw.input`
   rounded
 `
 
+const CommitButton = tw.button`
+  bg-green-500
+  text-white
+  p-2
+  rounded
+`
+
 type ProjectOverviewContentsProps = {
   projectId: string
   projectName: string
+  products: any[]
+  refetch: () => void
 }
 
 const ProjectOverviewContents: React.FC<ProjectOverviewContentsProps> = props => {
-  const { projectId, projectName } = props
+  const { projectId, projectName, products, refetch } = props
   const [title, setTitle] = useState(projectName)
+  const [product, setProduct] = useState("")
+  const [committingProduct, setCommittingProduct] = useState(false)
 
   const patchWorkspace = usePatchWorkspace(projectId)
 
@@ -67,6 +79,25 @@ const ProjectOverviewContents: React.FC<ProjectOverviewContentsProps> = props =>
     })
   }, [patchWorkspace])
 
+  const changeProduct = useCallback(e => {
+    setProduct(e.target.value)
+  }, [])
+
+  const commitProduct = useCallback(() => {
+    if (!committingProduct) {
+      setCommittingProduct(true)
+      patchWorkspace({
+        data: {
+          product
+        }
+      }).then(() => {
+        setCommittingProduct(false)
+        refetch()
+      })
+      setProduct("")
+    }
+  }, [committingProduct, patchWorkspace, product, refetch])
+
   return (
     <>
       <TopBar>
@@ -80,6 +111,23 @@ const ProjectOverviewContents: React.FC<ProjectOverviewContentsProps> = props =>
           onBlur={commitTitle}
         />
       </TopBar>
+      <TitleInput
+        type="text"
+        disabled={committingProduct}
+        value={product}
+        onChange={changeProduct}
+      />
+      <CommitButton
+        disabled={committingProduct}
+        onClick={commitProduct}
+      >
+        {committingProduct ? "Adding Product..." : "Add Product"}
+      </CommitButton>
+      <div>
+        {products.map(p => (
+          <ProductSummary key={p.p_id} name={p.title} price={p.price} />
+        ))}
+      </div>
     </>
   )
 }
@@ -91,7 +139,7 @@ type ProjectOverviewProps = {
 const ProjectOverview: React.FC<ProjectOverviewProps> = props => {
   const { projectId } = props
 
-  const { data, loading } = useWorkspace(projectId!)
+  const { data, loading, refetch } = useWorkspace(projectId!)
 
   const flipId = `bg-${projectId}`
 
@@ -105,7 +153,12 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = props => {
             loading ? (
               <div>Loading</div>
             ) : (
-              <ProjectOverviewContents projectId={projectId!} projectName={data.name} />
+              <ProjectOverviewContents
+                projectId={projectId!}
+                projectName={data.name}
+                products={data.products}
+                refetch={refetch}
+              />
             )
           }
         </Wrapper>
