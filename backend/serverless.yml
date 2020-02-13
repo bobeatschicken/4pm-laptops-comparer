@@ -19,6 +19,12 @@ functions:
           path: workspaces
           method: get
           authorizer: googleAuthorizer
+  postWorkspaces:
+    handler: postWorkspaces.create_workspace
+    events:
+      - http:
+          path: workspaces
+          method: post
   getWorkspaceById:
     handler: handler.get_workspace_by_id
     events:
