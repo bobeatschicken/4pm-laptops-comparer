@@ -14,7 +14,7 @@
                     <img src="richert-no-bg.png" id="authorize-image" />
                 </div>
             </div>
-            <div id="loading" class="hidden">
+            <div id="loading" class="visible">
                 <div id="loading-icon">
                     <div class="lds-facebook">
                         <div></div>
@@ -23,17 +23,11 @@
                     </div>
                 </div>
             </div>
-            <div id="workspace" class="visible">
+            <div id="workspace" class="hidden">
                 <div class="richert-select">
                     <select id="richert-select">
                         <option value="0">Select workspace...</option>
-                        <option value="1">Create New Workspace...</option>
                     </select>
-                </div>
-                <div class="richert-submit">
-                    <div class="richert-button">
-                        <span>Select</span>
-                    </div>
                 </div>
             </div>
             <div id="save" class="hidden">
@@ -46,6 +40,5 @@
             </div>
         </div>
         <script src="index.js"></script>
-        <script src="select.js"></script>
     </body>
 </html>

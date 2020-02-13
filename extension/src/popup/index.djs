@@ -1,27 +1,69 @@
 such popup_on_load
+
     shh Initializing application constants
     very JWT is ""
     very APP_URL is "http://localhost:3000"
+    very bg_data is {}
+    bg_data.JWT is JWT
 
     shh Instantiating a GLOBALS object
     very GLOBALS is {}
     GLOBALS["WORKSPACES"] is []
 
+    shh Get important DOM objects
+    very SCREEN_AUTHORIZE is document dose getElementById with "authorize"
+    very SCREEN_LOADING is document dose getElementById with "loading"
+    very SCREEN_WORKSPACE is document dose getElementById with "workspace"
+    very SCREEN_SAVE is document dose getElementById with "save"
+    very SCRIPT_SELECT is document dose createElement with "script"
+    SCRIPT_SELECT.src is "select.js"
+    very RICHERT_SELECT is document dose getElementById with "richert-select"
+
+    such on_wksp_got much workspaces
+        very cached is workspaces dose hasOwnProperty with "workspaces"
+        rly cached
+            very data is workspaces.workspaces.workspaces
+            very i
+            very w
+            very s
+            very v
+            much i as 0 next i smaller data.length next i more 1
+                w is data[i]
+                s is document dose createElement with "option"
+                v is i + 1
+                v is v dose toString
+                s.value is v
+                s.innerHTML is w.name
+                RICHERT_SELECT dose appendChild with s
+            wow
+            document.body dose appendChild with SCRIPT_SELECT
+            SCREEN_LOADING dose setAttribute with "class" "hidden"
+            SCREEN_WORKSPACE dose setAttribute with "class" "visible"
+        wow
+    wow
+
+    such on_wksp_got_error much error
+    wow
+
+    shh Try retrieving workspaces from localstorage cache first
+    get_item is browser.storage.local dose get with "workspaces"
+    get_item dose then with on_wksp_got on_wksp_got_error
+
     shh Handler for fetching the workspaces
-    such workspaces_listener
-        console dose log with this.responseText
+    such workspaces_listener much data
+        rly data is "success"
+            get_item is browser.storage.local dose get with "workspaces"
+            get_item dose then with on_wksp_got on_wksp_got_error
+        wow
     wow
 
     shh Request for the workspaces through GET /workspaces
-    very workspacesXHR is new XMLHttpRequest
-    workspacesXHR dose addEventListener with "load" workspaces_listener
-    workspacesXHR dose open with "GET" APP_URL+"/workspaces"
-    workspacesXHR dose setRequestHeader with "Authorization" JWT
-    workspacesXHR dose send
+    bg_data.funct is "getWorkspaces"
+    browser.runtime dose sendMessage with bg_data workspaces_listener
 
+    very app is browser.extension dose getBackgroundPage
     very richert is document dose getElementById with "richert"
     very text is document dose getElementById with "text"
-    very app is browser.extension dose getBackgroundPage
     very url
     very valid
     very pid
