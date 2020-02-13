@@ -47,6 +47,8 @@ functions:
 custom:
   database:
     url: mongodb+srv://${ssm:compare-db-username}:${ssm:compare-db-password}@${ssm:compare-db-url}
+  pythonRequirements:
+    dockerizePip: non-linux
 
 plugins:
   - serverless-python-requirements
