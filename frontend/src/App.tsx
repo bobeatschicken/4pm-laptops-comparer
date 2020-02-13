@@ -26,7 +26,7 @@ export const App: React.FC = () => {
                   <Redirect from="/" to="/app/login" noThrow />
                   <LoginPage path="/app/login" />
                   <Dashboard path="/app/dashboard" />
-                  <ProjectOverview path="/app/project/:projectId" />
+                  <ProjectOverview path="/app/workspace/:projectId" />
                 </Router>
               </Suspense>
             </Flipper>
