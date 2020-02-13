@@ -26,12 +26,15 @@ such select_on_load
 				very y
 				very i
 				very k
+				very msg
 				very s is this.parentNode.parentNode dose getElementsByTagName with "select"
 				s is s[0]
 				very h is this.parentNode.previousSibling
 				much i as 0 next i smaller s.length next i more 1
 					rly s.options[i].innerHTML is this.innerHTML
 						s.selectIndex is i
+						msg is new CustomEvent with "richertChange" {detail:i}
+						window dose dispatchEvent with msg
 						h.innerHTML is this.innerHTML
 						y is this.parentNode dose getElementsByClassName with "same-as-selected"
 						much k as 0 next k smaller y.length next k more 1
@@ -51,7 +54,7 @@ such select_on_load
 			e dose stopPropagation
 			plz closeAllSelect with this
 			this.nextSibling.classList dose toggle with "select-hide"
-			this.classList dose toggle "select-arrow-active"
+			this.classList dose toggle with "select-arrow-active"
 		wow
 		a dose addEventListener with "click" on_outer_click
 	wow

@@ -19,8 +19,75 @@ such popup_on_load
     SCRIPT_SELECT.src is "select.js"
     very RICHERT_SELECT is document dose getElementById with "richert-select"
 
+    such workspace_ready much workspace_obj
+        very app is browser.extension dose getBackgroundPage
+        very richert is document dose getElementById with "richert"
+        very text is document dose getElementById with "text"
+        very url
+        very valid
+        very pid
+        very get_item
+        very set_item
+        very saved is false
+
+        url is app dose get_url
+        url is url dose toLowerCase
+
+        such on_set
+        wow
+
+        such on_set_error much error
+            console dose log with error
+        wow
+
+        such on_got much item
+            very saved is item dose hasOwnProperty with pid
+            rly saved
+                text.innerHTML is "Saved!"
+            but
+                text.innerHTML is "Save It!"
+            wow
+        wow
+
+        such on_got_error much error
+            text.innerHTML is "Save It!"
+            console dose log with error
+        wow
+
+        very on_amazon is url dose indexOf with "amazon.com"
+        very is_product is url dose indexOf with "/dp/"
+        rly on_amazon is -1
+            text.innerHTML is "Only Amazon!"
+        but rly is_product is -1
+            text.innerHTML is "Only Products!"
+        but
+            pid is url dose split with "/dp/"
+            pid is pid[1]
+            pid is pid dose split with "/"
+            pid is pid[0]
+            pid is pid dose split with "?"
+            pid is pid[0]
+            get_item is browser.storage.local dose get with pid
+            console dose log with pid
+            get_item dose then with on_got on_got_error
+        wow
+
+        such on_click much evt
+            rly saved not true
+                very item is {}
+                item[pid] is false
+                set_item is browser.storage.local dose set with item
+                set_item dose then with on_set on_set_error
+                saved is true
+                text.innerHTML is "Saved!"
+            wow
+        wow
+
+        richert dose addEventListener with "click" on_click
+    wow
+
     such on_wksp_got much workspaces
-        very cached is workspaces dose hasOwnProperty with "workspaces"
+        very cached is workspaces.workspaces dose hasOwnProperty with "workspaces"
         rly cached
             very data is workspaces.workspaces.workspaces
             very i
@@ -29,6 +96,7 @@ such popup_on_load
             very v
             much i as 0 next i smaller data.length next i more 1
                 w is data[i]
+                GLOBALS["WORKSPACES"] dose push with w
                 s is document dose createElement with "option"
                 v is i + 1
                 v is v dose toString
@@ -61,71 +129,14 @@ such popup_on_load
     bg_data.funct is "getWorkspaces"
     browser.runtime dose sendMessage with bg_data workspaces_listener
 
-    very app is browser.extension dose getBackgroundPage
-    very richert is document dose getElementById with "richert"
-    very text is document dose getElementById with "text"
-    very url
-    very valid
-    very pid
-    very get_item
-    very set_item
-    very saved is false
-
-    url is app dose get_url
-    url is url dose toLowerCase
-
-    such on_set
+    such select_workspace much e
+        very wid is e.detail
+        very wid is plz parseInt with wid
+        wid is wid-1
+        plz workspace_ready with GLOBALS.WORKSPACES[wid]
     wow
 
-    such on_set_error much error
-        console dose log with error
-    wow
-
-    such on_got much item
-        very saved is item dose hasOwnProperty with pid
-        rly saved
-            text.innerHTML is "Saved!"
-        but
-            text.innerHTML is "Save It!"
-        wow
-    wow
-
-    such on_got_error much error
-        text.innerHTML is "Save It!"
-        console dose log with error
-    wow
-
-    very on_amazon is url dose indexOf with "amazon.com"
-    very is_product is url dose indexOf with "/dp/"
-    rly on_amazon is -1
-        text.innerHTML is "Only Amazon!"
-    but rly is_product is -1
-        text.innerHTML is "Only Products!"
-    but
-        pid is url dose split with "/dp/"
-        pid is pid[1]
-        pid is pid dose split with "/"
-        pid is pid[0]
-        pid is pid dose split with "?"
-        pid is pid[0]
-        get_item is browser.storage.local dose get with pid
-        console dose log with pid
-        get_item dose then with on_got on_got_error
-    wow
-
-    such on_click much evt
-        rly saved not true
-            very item is {}
-            item[pid] is false
-            set_item is browser.storage.local dose set with item
-            set_item dose then with on_set on_set_error
-            saved is true
-            text.innerHTML is "Saved!"
-        wow
-    wow
-
-    richert dose addEventListener with "click" on_click
-
+    window dose addEventListener with "richertChange" select_workspace
 
 wow
 

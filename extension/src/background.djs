@@ -66,10 +66,14 @@ such message_handler much request sender callback
         wow
 
         such do_callback
-            very item is {}
-            item["workspaces"] is JSON dose parse with xhr.responseText
-            set_item is browser.storage.local dose set with item
-            set_item dose then with on_set on_set_error
+            very callback_data is JSON dose parse with xhr.responseText
+            very workspace_save is callback_data dose hasOwnProperty with "workspaces"
+            rly workspace_save
+                very item is {}
+                item["workspaces"] is callback_data
+                set_item is browser.storage.local dose set with item
+                set_item dose then with on_set on_set_error
+            wow
             plz callback with "success"
         wow
 
@@ -84,7 +88,13 @@ such message_handler much request sender callback
         rly request.JWT
             xhr dose setRequestHeader with "Authorization" request.JWT
         wow
-        xhr dose send
+        rly funct.method is "GET"
+            xhr dose send
+        but rly funct.method is "PATCH"
+            xhr dose send with request.data
+        but rly funct.method is "POST"
+            xhr dose send with request.data
+        wow
     wow
 wow true
 
