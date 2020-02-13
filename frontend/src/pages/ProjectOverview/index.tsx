@@ -90,6 +90,9 @@ type ProjectOverviewProps = {
 
 const ProjectOverview: React.FC<ProjectOverviewProps> = props => {
   const { projectId } = props
+
+  const { data, loading } = useWorkspace(projectId!)
+
   const flipId = `bg-${projectId}`
 
   return (
@@ -98,7 +101,13 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = props => {
       <NavBar/>
       <Flipped flipId={flipId}>
         <Wrapper>
-          <ProjectOverviewContents projectId={projectId!} projectName="Untitled Workspace"/>
+          {
+            loading ? (
+              <div>Loading</div>
+            ) : (
+              <ProjectOverviewContents projectId={projectId!} projectName={data.name} />
+            )
+          }
         </Wrapper>
       </Flipped>
     </>
