@@ -24,11 +24,9 @@ def create_workspace(event, context):
 		new_id = db.workspaces.insert_one(new_workspace).inserted_id
 		print("new workspace inserted, workspace id:", str(new_id))
 		body["_id"] = str(new_id)
-		errorCode = {"code": 0, "message": "SUCCESS: no error"}
 
 		response = {
 			"statusCode": 200,
-			"errorCode": json.dumps(errorCode),
 			"body": json.dumps(body)
 		}
 		return response
