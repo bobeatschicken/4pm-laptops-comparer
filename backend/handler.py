@@ -120,8 +120,9 @@ def get_workspace_by_id(event, context):
 		body = {"Error":"Workspace does not exist!"}
 	else:
 		#Return workspaces of the user
-		build_body = {"products": [] }
+		build_body = {"name":"","products": [] }
 		for workspace in cursor:
+			build_body["name"] = workspace["name"]
 			#if the user does not own the workspace
 			if (workspace["owner"] != user_google_id):
 				build_body = {"error": "User does not own this workspace."}
