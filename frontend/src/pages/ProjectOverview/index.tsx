@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from "react"
-import { RouteComponentProps, Link, navigate } from "@reach/router"
+import { RouteComponentProps, navigate } from "@reach/router"
 import tw from "tailwind.macro"
 import { createGlobalStyle } from "styled-components/macro"
 import { Flipped } from "react-flip-toolkit"
 import { FaAngleLeft } from "react-icons/all"
 
 import { NavBar } from "components/NavBar"
+import { usePatchWorkspace, useWorkspace } from "resources/projects"
 
 const BodyStyles = createGlobalStyle`
   body {
@@ -48,6 +49,8 @@ const ProjectOverviewContents: React.FC<ProjectOverviewContentsProps> = props =>
   const { projectId, projectName } = props
   const [title, setTitle] = useState(projectName)
 
+  const patchWorkspace = usePatchWorkspace(projectId)
+
   const navigateToDashboard = useCallback(() => {
     navigate("/app/dashboard")
   }, [])
@@ -56,13 +59,26 @@ const ProjectOverviewContents: React.FC<ProjectOverviewContentsProps> = props =>
     setTitle(e.target.value)
   }, [])
 
+  const commitTitle = useCallback(e => {
+    patchWorkspace({
+      data: {
+        name: e.target.value
+      }
+    })
+  }, [patchWorkspace])
+
   return (
     <>
       <TopBar>
         <BackButton onClick={navigateToDashboard}>
           <FaAngleLeft />
         </BackButton>
-        <TitleInput type="text" value={title} onChange={changeTitle} />
+        <TitleInput
+          type="text"
+          value={title}
+          onChange={changeTitle}
+          onBlur={commitTitle}
+        />
       </TopBar>
     </>
   )
@@ -78,11 +94,11 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = props => {
 
   return (
     <>
-      <BodyStyles />
-      <NavBar />
+      <BodyStyles/>
+      <NavBar/>
       <Flipped flipId={flipId}>
         <Wrapper>
-          <ProjectOverviewContents projectId={projectId!} projectName="Untitled Workspace" />
+          <ProjectOverviewContents projectId={projectId!} projectName="Untitled Workspace"/>
         </Wrapper>
       </Flipped>
     </>

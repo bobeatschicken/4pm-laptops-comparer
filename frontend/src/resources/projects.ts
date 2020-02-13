@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react"
 import { navigate } from "@reach/router"
 import { useAuth } from "utils/auth"
 import useAxios from "axios-hooks"
+import { AxiosRequestConfig } from "axios"
 
 const BASE_URL = process.env.REACT_APP_API_ENDPOINT
 
@@ -78,4 +79,19 @@ export function useWorkspace(workspaceId: string) {
     error: data?.error,
     loading: !data && !error
   }
+}
+
+export function usePatchWorkspace(workspaceId: string) {
+  const { token } = useAuth()
+
+  const [, run] =
+    useAxios({
+      url: `${BASE_URL}/workspaces/${workspaceId}`,
+      method: "patch",
+      headers: {
+        Authorization: token
+      }
+    }, { manual: true })
+
+  return run
 }
