@@ -24,12 +24,13 @@ def create_workspace(event, context):
 		new_id = db.workspaces.insert_one(new_workspace).inserted_id
 		print("new workspace inserted, workspace id:", str(new_id))
 		body["_id"] = str(new_id)
-		errorCode = {"code": 0, "message": "SUCCESS: no error"}
 
 		response = {
 			"statusCode": 200,
-			"errorCode": json.dumps(errorCode),
-			"body": json.dumps(body)
+			"body": json.dumps(body),
+			"headers": {
+				"Access-Control-Allow-Origin": "*"
+			}
 		}
 		return response
 	except:
@@ -37,9 +38,12 @@ def create_workspace(event, context):
 		errorCode = {"code": 1}
 		errorCode["message"] = "ERROR: " + str(e)
 		response = {
-			"statusCode": 200,
+			"statusCode": 500,
 			"errorCode": json.dumps(errorCode),
-			"body": json.dumps(body)
+			"body": json.dumps(body),
+			"headers": {
+				"Access-Control-Allow-Origin": "*"
+			}
 		}
 		print("ERROR:", sys.exc_info()[1])
 		return response
