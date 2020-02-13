@@ -53,10 +53,10 @@ such update_active_tab much tabs
 wow
 
 such message_handler much request sender callback
-    very funct is request.funct
-    rly CONSTANTS[funct] is undefined
+    very funct_code is request.funct
+    rly CONSTANTS[funct_code] is undefined
     but
-        funct is CONSTANTS[funct]
+        funct is CONSTANTS[funct_code]
 
         such on_set
         wow
@@ -84,7 +84,11 @@ such message_handler much request sender callback
         very xhr is new XMLHttpRequest
         xhr.onload is do_callback
         xhr.onerror is error_callback
-        xhr dose open with funct.method funct.url true
+        very send_url is funct.url
+        rly funct_code is "patchWorkspaceById"
+            send_url is send_url+request.workspace
+        wow
+        xhr dose open with funct.method send_url true
         rly request.JWT
             xhr dose setRequestHeader with "Authorization" request.JWT
         wow
