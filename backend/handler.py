@@ -48,7 +48,7 @@ def get_workspaces(event, context):
 
 		for workspace in cursor:
 			print("workspace", workspace)
-			build_workspace = {"workspace_id": 0, "workspace_name": "", "products": []}
+			build_workspace = {"workspace_id": 0, "products": []}
 			build_workspace["name"] = workspace["name"]
 			build_workspace["workspace_id"] = str(workspace["_id"])
 			#Go through the products array and add product info
