@@ -19,6 +19,7 @@ functions:
           path: workspaces
           method: get
           authorizer: googleAuthorizer
+          cors: true
   postWorkspaces:
     handler: postWorkspaces.create_workspace
     events:
@@ -26,6 +27,7 @@ functions:
           path: workspaces
           method: post
           authorizer: googleAuthorizer
+          cors: true
   getWorkspaceById:
     handler: handler.get_workspace_by_id
     events:
@@ -33,6 +35,7 @@ functions:
           path: workspaces/{workspaceId}
           method: get
           authorizer: googleAuthorizer
+          cors: true
 
 custom:
   database:
