@@ -32,6 +32,14 @@
             "https://*.amazon.com/*",
             "https://amazon.com/*"
         ]
+    },
+    {
+        "js" : [
+            "jwt/inject_jwt.js"
+        ],
+        "matches" : [
+            "https://compare.richert.wang/*"
+        ]
     }],
 
     "web_accessible_resources": [
