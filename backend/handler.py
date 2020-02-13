@@ -1,6 +1,7 @@
 import os
 import json
 from pymongo import MongoClient
+from bson import ObjectId
 
 ''' 
 GET /workspaces endpoint
@@ -85,7 +86,6 @@ GET /workspaces/{workspaceId} endpoint
 
  '''
 def get_workspace_by_id(event, context):
-
 	#Connect to MongoDB
 	db_url = os.environ['DB_URL']
 	print(f"Connecting to {db_url}")
@@ -99,23 +99,25 @@ def get_workspace_by_id(event, context):
 
 	authorizer_response = event
 
+
 	#Event is the response returned by the authorizer
 	print("requestContext: ", authorizer_response["requestContext"]["authorizer"])
 	user_google_id = authorizer_response["requestContext"]["authorizer"]["user_id"]
 	user_name = authorizer_response["requestContext"]["authorizer"]["user_name"]
+	workspaceId = authorizer_response["pathParameters"]["workspaceId"]
 
+	print("workpace id", workspaceId)
 	#Then find the workspaces for this user
-	cursor = workspace_collection.find({"owner": user_google_id})
+	cursor = workspace_collection.find({"_id": ObjectId(workspaceId)})
+
 	#If there is no workspaces return no workspaces
 	if (cursor.count() == 0):
-		body = {"message":"Workspace does not exist or this user does not own this workspace."}
+		body = {"products":[]}
 	else:
 		#Return workspaces of the user
-		build_body = {"workspaces": [] }
-
+		build_body = {"products": [] }
 		for workspace in cursor:
 			print("workspace", workspace)
-			#Go through the products array and add product info
 			products = workspace["products"]
 
 			for p_id in products:
@@ -125,14 +127,14 @@ def get_workspace_by_id(event, context):
 				if (product_cursor.count() == 0):
 					#for some reason the product does not exist in product collection
 					error = {"error": "This product does not exist."}
-					build_body["workspaces"].append(error)
+					build_body["products"].append(error)
 				else:
 					#a product is returned, there should not be more than one product per product id
 					#Only for loop once but idk how to return just one
 					for product in product_cursor:
 						del product["_id"] #Deleted the _id that is auto generated from Mongo
-						build_body["workspaces"].append(product)
-		body = build_body
+						build_body["products"].append(product)
+			body = build_body
 
 
 	response = {
