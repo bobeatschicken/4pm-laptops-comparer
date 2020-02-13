@@ -3,6 +3,7 @@ import tw from "tailwind.macro"
 import { Flipped } from "react-flip-toolkit"
 
 import richert from "images/richert.jpg"
+import { useAuth } from "utils/auth"
 
 const BrandImage = tw.img`
   mr-4
@@ -10,19 +11,29 @@ const BrandImage = tw.img`
   rounded-full
 `
 
+const Brand = tw.div`
+  flex items-center
+`
+
 const Wrapper = tw.nav`
   flex items-center
   py-4 px-12
   text-white font-semibold
+  justify-between
 `
 
 export const NavBar: React.FC = props => {
+  const { signOut } = useAuth()
+
   return (
     <Wrapper>
-      <Flipped flipId="richert">
-        <BrandImage src={richert} />
-      </Flipped>
-      Comparé by Richert
+      <Brand>
+        <Flipped flipId="richert">
+          <BrandImage src={richert} />
+        </Flipped>
+        Comparé by Richert
+      </Brand>
+      <button onClick={signOut}>Logout</button>
     </Wrapper>
   )
 }

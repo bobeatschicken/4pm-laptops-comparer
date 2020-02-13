@@ -1,5 +1,6 @@
-import React, { useState, useMemo, useContext } from "react"
-import { useGoogleLogin } from "react-google-login"
+import React, { useState, useMemo, useContext, useEffect } from "react"
+import { useGoogleLogin, useGoogleLogout } from "react-google-login"
+import { navigate } from "@reach/router"
 
 const noop = () => {}
 
@@ -7,6 +8,7 @@ type AuthContextValue =  {
   token: string
   loaded: boolean
   signIn: () => void
+  signOut: () => void
 }
 
 export const AuthContext =
@@ -17,8 +19,9 @@ export const useAuth = () => useContext(AuthContext)
 export const AuthProvider: React.FC = props => {
   const { children } = props
   const [userObject, setUserObject] = useState()
+  const token = userObject?.tokenId
 
-  const { signIn, loaded } = useGoogleLogin({
+  const googleLoginCommon = {
     jsSrc: "https://apis.google.com/js/api.js",
     clientId: "58231025054-oua7h9662eqpb7ngl33qjhshetl13fod.apps.googleusercontent.com",
     scope: "profile email",
@@ -29,14 +32,31 @@ export const AuthProvider: React.FC = props => {
     uxMode: "popup",
     onRequest: noop,
     onFailure: console.error,
+  }
+
+  const { signIn, loaded } = useGoogleLogin({
+    ...googleLoginCommon,
     onSuccess: setUserObject
   })
 
+  const { signOut } = useGoogleLogout({
+    ...googleLoginCommon,
+    onLogoutSuccess: () => {
+      setUserObject(null)
+      navigate("/app/login")
+    }
+  })
+
+  useEffect(() => {
+    localStorage.setItem("jwt", token)
+  }, [token])
+
   const value = useMemo(() => ({
-    token: userObject?.tokenId,
+    token,
     signIn,
+    signOut,
     loaded
-  }), [loaded, signIn, userObject])
+  }), [token, loaded, signIn])
 
   return (
     <AuthContext.Provider value={value}>

@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { Link, RouteComponentProps } from "@reach/router"
+import React, { useEffect, useState } from "react"
+import { Link, navigate, RouteComponentProps } from "@reach/router"
 import tw from "tailwind.macro"
 import { createGlobalStyle } from "styled-components/macro"
 import { Flipped } from "react-flip-toolkit"
@@ -69,6 +69,12 @@ const TextWell = tw.div`
 const LoginPage: React.FC<RouteComponentProps> = () => {
   const { token } = useAuth()
 
+  useEffect(() => {
+    if (token) {
+      navigate("/app/dashboard")
+    }
+  }, [token])
+
   return (
     <>
       <BodyStyles />
@@ -84,17 +90,6 @@ const LoginPage: React.FC<RouteComponentProps> = () => {
             </ProfileTitle>
           </Profile>
           <GoogleLoginButton />
-          {
-            token && (
-              <>
-                <br />
-                <h1>Your JWT:</h1>
-                <TextWell>
-                  {token}
-                </TextWell>
-              </>
-            )
-          }
         </Card>
       </Layout>
     </>
