@@ -12,19 +12,22 @@ functions:
     handler: authorizer.handle
     environment:
       GOOGLE_CLIENT_ID: ${ssm:compare-google-client-id}
-  hello:
+  getWorkspaces:
     handler: handler.get_workspaces
     events:
       - http:
           path: workspaces
           method: get
           authorizer: googleAuthorizer
+          cors: true
   postWorkspaces:
     handler: postWorkspaces.create_workspace
     events:
       - http:
           path: workspaces
           method: post
+          authorizer: googleAuthorizer
+          cors: true
   getWorkspaceById:
     handler: handler.get_workspace_by_id
     events:
@@ -32,6 +35,14 @@ functions:
           path: workspaces/{workspaceId}
           method: get
           authorizer: googleAuthorizer
+  patchWorkspaceById:
+    handler: handler.patch_workspace_by_id
+    events:
+      - http:
+          path: workspaces/{workspaceId}
+          method: patch
+          authorizer: googleAuthorizer
+          cors: true
 
 custom:
   database:
