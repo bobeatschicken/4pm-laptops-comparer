@@ -3,6 +3,7 @@ import { RouteComponentProps, Link, navigate } from "@reach/router"
 import tw from "tailwind.macro"
 import { createGlobalStyle } from "styled-components/macro"
 import { Flipped } from "react-flip-toolkit"
+import { FaAngleLeft } from "react-icons/all"
 
 import { NavBar } from "components/NavBar"
 
@@ -13,19 +14,65 @@ const BodyStyles = createGlobalStyle`
   }
 `
 
-const PurpleBox = tw.div`
+const Wrapper = tw.div`
   max-w-6xl
-  m-auto p-10
+  m-auto px-1 py-2
+  md:px-6 md:py-6
   bg-white
   rounded-lg
   shadow-lg
 `
 
+const TopBar = tw.div`
+  flex flex-row items-center
+`
+
+const BackButton = tw.button`
+  text-4xl
+  p-2
+  md:mr-4
+`
+
+const TitleInput = tw.input`
+  bg-gray-200
+  px-4 py-2
+  rounded
+`
+
+type ProjectOverviewContentsProps = {
+  projectId: string
+  projectName: string
+}
+
+const ProjectOverviewContents: React.FC<ProjectOverviewContentsProps> = props => {
+  const { projectId, projectName } = props
+  const [title, setTitle] = useState(projectName)
+
+  const navigateToDashboard = useCallback(() => {
+    navigate("/app/dashboard")
+  }, [])
+
+  const changeTitle = useCallback(e => {
+    setTitle(e.target.value)
+  }, [])
+
+  return (
+    <>
+      <TopBar>
+        <BackButton onClick={navigateToDashboard}>
+          <FaAngleLeft />
+        </BackButton>
+        <TitleInput type="text" value={title} onChange={changeTitle} />
+      </TopBar>
+    </>
+  )
+}
+
 type ProjectOverviewProps = {
   projectId?: string
 } & RouteComponentProps
 
-const FirstPage: React.FC<ProjectOverviewProps> = props => {
+const ProjectOverview: React.FC<ProjectOverviewProps> = props => {
   const { projectId } = props
   const flipId = `bg-${projectId}`
 
@@ -34,12 +81,12 @@ const FirstPage: React.FC<ProjectOverviewProps> = props => {
       <BodyStyles />
       <NavBar />
       <Flipped flipId={flipId}>
-        <PurpleBox>
-          {projectId}
-        </PurpleBox>
+        <Wrapper>
+          <ProjectOverviewContents projectId={projectId!} projectName="Untitled Workspace" />
+        </Wrapper>
       </Flipped>
     </>
   )
 }
 
-export default FirstPage
+export default ProjectOverview
