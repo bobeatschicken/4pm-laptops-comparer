@@ -27,7 +27,10 @@ def create_workspace(event, context):
 
 		response = {
 			"statusCode": 200,
-			"body": json.dumps(body)
+			"body": json.dumps(body),
+			"headers": {
+				"Access-Control-Allow-Origin": "*"
+			}
 		}
 		return response
 	except:
@@ -35,9 +38,12 @@ def create_workspace(event, context):
 		errorCode = {"code": 1}
 		errorCode["message"] = "ERROR: " + str(e)
 		response = {
-			"statusCode": 200,
+			"statusCode": 500,
 			"errorCode": json.dumps(errorCode),
-			"body": json.dumps(body)
+			"body": json.dumps(body),
+			"headers": {
+				"Access-Control-Allow-Origin": "*"
+			}
 		}
 		print("ERROR:", sys.exc_info()[1])
 		return response
