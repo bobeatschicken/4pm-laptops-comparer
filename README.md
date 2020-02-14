@@ -33,7 +33,8 @@ For those who cannot decide which new computer they'd like to spend their lives'
 * pyMongo
 
 ### Installation Steps
-* 
+* Backend: <https://github.com/ucsb-cs48-w20/4pm-laptops-comparer/blob/master/backend/README.md>
+* Frontend: <https://github.com/ucsb-cs48-w20/4pm-laptops-comparer/blob/master/frontend/README.md>
 
 ## Functionality
 * User can log in with their Google account to have their products and workspaces saved on both the web extension and the web app
@@ -56,6 +57,4 @@ For those who cannot decide which new computer they'd like to spend their lives'
 5. Submit a pull request :D
 
 ## License
-
-If you haven't already, add a file called `LICENSE.txt` with the text of the appropriate license.
-We recommend using the MIT license: <https://choosealicense.com/licenses/mit/>
+<https://github.com/ucsb-cs48-w20/4pm-laptops-comparer/blob/master/LICENSE.txt>
