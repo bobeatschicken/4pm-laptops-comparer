@@ -20,6 +20,7 @@ For those who cannot decide which new computer they'd like to spend their lives'
 #### Web app
 * serverless
 * Postman
+* AWS account with Lambda set up
 
 ### Dependencies
 
