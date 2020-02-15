@@ -9,7 +9,7 @@
     },
 
     "permissions" : [
-        "tabs", "https://amazon.com/*", "storage", "https://*.amazon.com/*"
+        "tabs", "https://amazon.com/*", "storage", "https://*.amazon.com/*", "https://compare.richert.wang/*"
     ],
     
     "background" : {
@@ -32,10 +32,19 @@
             "https://*.amazon.com/*",
             "https://amazon.com/*"
         ]
+    },
+    {
+        "js" : [
+            "jwt/inject_jwt.js"
+        ],
+        "matches" : [
+            "https://compare.richert.wang/*"
+        ]
     }],
 
     "web_accessible_resources": [
         "konami/richert.js",
-        "konami/index.html"
+        "konami/index.html",
+        "jwt/jwt.js"
     ]
 }
