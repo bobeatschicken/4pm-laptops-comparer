@@ -6,7 +6,7 @@ from bson import ObjectId
 
 
 def get_workspaces(event, context):
-	''' 
+	'''
 	GET /workspaces endpoint
 	Given a correct Google JWT token for a user, this endpoint will return all the workspaces of the user
 	Also if the user has never logged into the account before, it will create on in the users collection
@@ -86,7 +86,7 @@ def get_workspaces(event, context):
 
 
 def get_workspace_by_id(event, context):
-	''' 
+	'''
 	GET /workspaces/{workspaceId} endpoint
 	Given a correct Google JWT token for a user, this endpoint will return the workspaces of the specified ID
 	Should only work if the user owns that workspace
@@ -163,16 +163,16 @@ def get_workspace_by_id(event, context):
 
 
 def patch_workspace_by_id(event, context):
-	''' 
+	'''
 	PATCH /workspaces/{workspaceId} endpoint
 	Given a correct Google JWT token and correct json for an updated workspace
 	endpoint will update the workspace with new info
 	Format for PATCH JSON
-	
+
 	Each field is optional, the ones that are specified will be updated into the workspace.
 	{
-		"name" : "new title" 
-		"products" : [new_products_array] 
+		"name" : "new title"
+		"products" : [new_products_array]
 	}
 
 	'''
@@ -223,7 +223,7 @@ def patch_workspace_by_id(event, context):
 				if (not check_for_product):
 					product_id = add_product_amazon(patched_info[key])
 					#Add to products array
-				
+
 				workspace_collection.update({"_id": ObjectId(workspaceId)}, {"$push": {"products": product_id}})
 			else:
 				workspace_collection.update_one({"_id": ObjectId(workspaceId)}, {"$set": {key:patched_info[key]}}, True)

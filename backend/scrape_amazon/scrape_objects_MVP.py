@@ -81,11 +81,11 @@ def get_id(url):
         return item_id
 
     if url.find('/dp/') >= 0:
-        item_id = re.search(r'\/dp\/\w+(\/|$)', url).group(0)
+        item_id = re.search(r'/dp/\w+[/$?]', url).group(0)
         return remove_end_slash(item_id[len('/dp/'):])
 
     if url.find('/gp/') >= 0:
-        item_id = re.search(r'\/gp\/product\/\w+(\/|$)', url).group(0)
+        item_id = re.search(r'/gp/product/\w+[/$?]', url).group(0)
         return remove_end_slash(item_id[len('/gp/product/'):])
 
     return None
