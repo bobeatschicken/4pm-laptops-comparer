@@ -1,5 +1,13 @@
+'''
+workspace handler
+
+Contains all endpoints for /workspaces
+
+
+'''
 import os
 import json
+import sys
 from scrape_amazon.update_product_db_amazon import check_product_exists, add_product_amazon
 from pymongo import MongoClient
 from bson import ObjectId
@@ -217,3 +225,49 @@ def patch_workspace_by_id(event, context):
 	}
 
 	return response
+
+
+def create_workspace(event, context):
+	'''
+	POST /workspaces
+	Creates a new workspace with given JWT token, returns the id of the workspace
+	'''
+	global db
+
+	body = {}
+
+	authorizer_response = event
+
+	try:
+		user_info = ms.get_user_auth(event)
+
+		# Create new workspace owned by user with default untitled name
+		new_workspace = {"owner": user_info["g_id"], "name": "Untitled Workspace", "products": []}
+		new_id = db.workspaces.insert_one(new_workspace).inserted_id
+		print("new workspace inserted, workspace id:", str(new_id))
+		body["_id"] = str(new_id)
+
+		response = {
+			"statusCode": 200,
+			"body": json.dumps(body),
+			"headers": {
+				"Access-Control-Allow-Origin": "*"
+			}
+		}
+		return response
+	except:
+		e = sys.exc_info()[0]
+		errorCode = {"code": 1}
+		errorCode["message"] = "ERROR: " + str(e)
+		response = {
+			"statusCode": 500,
+			"errorCode": json.dumps(errorCode),
+			"body": json.dumps(body),
+			"headers": {
+				"Access-Control-Allow-Origin": "*"
+			}
+		}
+		print("ERROR:", sys.exc_info()[1])
+		return response
+
+
