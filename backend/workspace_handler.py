@@ -1,9 +1,20 @@
+'''
+workspace handler
+
+Contains all endpoints for /workspaces
+
+
+'''
 import os
 import json
+import sys
 from scrape_amazon.update_product_db_amazon import check_product_exists, add_product_amazon
 from pymongo import MongoClient
 from bson import ObjectId
+import mongoSetup as ms
 
+# Connects to MongoDB
+db = ms.connect_database()
 
 def get_workspaces(event, context):
 	'''
@@ -13,31 +24,24 @@ def get_workspaces(event, context):
 
 	'''
 
-	#Connect to MongoDB
-	db_url = os.environ['DB_URL']
-	print(f"Connecting to {db_url}")
-	client = MongoClient(db_url)
-	db = client.compurator
+	global db
 	users_collection = db["users"]
 	workspace_collection = db["workspaces"]
 	products_collection = db["products"]
 
 	body = ""
-
 	authorizer_response = event
 
-	#Event is the response returned by the authorizer
+	#Grab the user information from ms 
 	print("requestContext: ", authorizer_response["requestContext"]["authorizer"])
-	user_google_id = authorizer_response["requestContext"]["authorizer"]["user_id"]
-	user_name = authorizer_response["requestContext"]["authorizer"]["user_name"]
+	user_info = ms.get_user_auth(authorizer_response)
+	user_google_id = user_info["g_id"]
+	user_name = user_info["name"]
 
-	#Check to see if the user in the the user collections if not store into user collection
-	cursor = users_collection.find({"google_client_id": user_google_id})
-	if (cursor.count() == 0):
-		new_user = { "google_client_id": user_google_id, "name": user_name }
-		users_collection.insert_one(new_user)
+	#See if the user exists and create them if not
+	ms.check_user(user_info)
 
-	#Then find the workspaces for this user
+	#Find workspaces for the user
 	cursor = workspace_collection.find({"owner": user_google_id})
 	#If there is no workspaces return no workspaces
 	if (cursor.count() == 0):
@@ -88,15 +92,11 @@ def get_workspaces(event, context):
 def get_workspace_by_id(event, context):
 	'''
 	GET /workspaces/{workspaceId} endpoint
-	Given a correct Google JWT token for a user, this endpoint will return the workspaces of the specified ID
+	Given a correct Google JWT token for a user, this endpoint will return the workspace of the specified ID
 	Should only work if the user owns that workspace
 
  	'''
-	#Connect to MongoDB
-	db_url = os.environ['DB_URL']
-	print(f"Connecting to {db_url}")
-	client = MongoClient(db_url)
-	db = client.compurator
+	global db
 	users_collection = db["users"]
 	workspace_collection = db["workspaces"]
 	products_collection = db["products"]
@@ -106,14 +106,13 @@ def get_workspace_by_id(event, context):
 
 	authorizer_response = event
 
-
-	#Event is the response returned by the authorizer
+	#Grab the user information from ms 
 	print("requestContext: ", authorizer_response["requestContext"]["authorizer"])
-	user_google_id = authorizer_response["requestContext"]["authorizer"]["user_id"]
-	user_name = authorizer_response["requestContext"]["authorizer"]["user_name"]
+	user_info = ms.get_user_auth(authorizer_response)
+	user_google_id = user_info["g_id"]
+	user_name = user_info["name"]
 	workspaceId = authorizer_response["pathParameters"]["workspaceId"]
 
-	print("workpace id", workspaceId)
 	#Then find the workspaces for this user
 	cursor = workspace_collection.find({"_id": ObjectId(workspaceId)})
 
@@ -160,8 +159,6 @@ def get_workspace_by_id(event, context):
 
 	return response
 
-
-
 def patch_workspace_by_id(event, context):
 	'''
 	PATCH /workspaces/{workspaceId} endpoint
@@ -172,16 +169,12 @@ def patch_workspace_by_id(event, context):
 	Each field is optional, the ones that are specified will be updated into the workspace.
 	{
 		"name" : "new title"
-		"products" : [new_products_array]
+		"product" : [one singular product to add]
 	}
 
 	'''
 
-	#Connect to MongoDB
-	db_url = os.environ['DB_URL']
-	print(f"Connecting to {db_url}")
-	client = MongoClient(db_url)
-	db = client.compurator
+	global db
 	users_collection = db["users"]
 	workspace_collection = db["workspaces"]
 	products_collection = db["products"]
@@ -191,18 +184,14 @@ def patch_workspace_by_id(event, context):
 
 	authorizer_response = event
 
-	#print("EVENT", json.dumps(event))
-
-	#Event is the response returned by the authorizer
-	user_google_id = authorizer_response["requestContext"]["authorizer"]["user_id"]
-	user_name = authorizer_response["requestContext"]["authorizer"]["user_name"]
+	#Grab the user information from ms 
+	user_info = ms.get_user_auth(authorizer_response)
+	user_google_id = user_info["g_id"]
+	user_name = user_info["name"]
 	workspaceId = authorizer_response["pathParameters"]["workspaceId"]
 
 	patched_info = json.loads(authorizer_response["body"])
 
-	print ("body", patched_info)
-
-	print("workpace id", workspaceId)
 	#Then find the workspaces for this user
 	cursor = workspace_collection.find({"_id": ObjectId(workspaceId)})
 
@@ -215,11 +204,9 @@ def patch_workspace_by_id(event, context):
 		for key in patched_info:
 			#For MVP, assume everytime patch is called only adding one product
 			if (key == "product"):
-				print("key bitch")
 				#Check to see if the url given exists in db, if not add
 				check_for_product = check_product_exists(patched_info[key])
 				product_id = check_for_product
-				print("check", check_for_product)
 				if (not check_for_product):
 					product_id = add_product_amazon(patched_info[key])
 					#Add to products array
@@ -238,3 +225,49 @@ def patch_workspace_by_id(event, context):
 	}
 
 	return response
+
+
+def create_workspace(event, context):
+	'''
+	POST /workspaces
+	Creates a new workspace with given JWT token, returns the id of the workspace
+	'''
+	global db
+
+	body = {}
+
+	authorizer_response = event
+
+	try:
+		user_info = ms.get_user_auth(event)
+
+		# Create new workspace owned by user with default untitled name
+		new_workspace = {"owner": user_info["g_id"], "name": "Untitled Workspace", "products": []}
+		new_id = db.workspaces.insert_one(new_workspace).inserted_id
+		print("new workspace inserted, workspace id:", str(new_id))
+		body["_id"] = str(new_id)
+
+		response = {
+			"statusCode": 200,
+			"body": json.dumps(body),
+			"headers": {
+				"Access-Control-Allow-Origin": "*"
+			}
+		}
+		return response
+	except:
+		e = sys.exc_info()[0]
+		errorCode = {"code": 1}
+		errorCode["message"] = "ERROR: " + str(e)
+		response = {
+			"statusCode": 500,
+			"errorCode": json.dumps(errorCode),
+			"body": json.dumps(body),
+			"headers": {
+				"Access-Control-Allow-Origin": "*"
+			}
+		}
+		print("ERROR:", sys.exc_info()[1])
+		return response
+
+
